@@ -1,0 +1,17 @@
+<ul>
+    <li>
+        <a href="{% url 'feed:subscribers'%}">Главная страница</a>
+    </li>
+
+    <li>
+        <a href="{% url 'blog:my_blog' pk=request.user.blog.pk %}">Мои статьи</a>
+    </li>
+
+    <li>
+        <a href="{% url 'feed:edit_subscribers' %}">Мои подписки</a>
+    </li>
+
+    <li>
+        <a href="{% url 'blog:blog_list' %}">Блоги</a>
+    </li>
+</ul>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Лента новостей</title>
+</head>
+<body>
+{% block menu %}
+    {% include 'blogapp/menu.html' %}
+{% endblock %}
+
+<div>
+    <h2>Лента новостей</h2>
+    {% for object in object_list %}
+        <h3>Название блога {{ object.blog | capfirst }} </h3>
+        <h4><a href="{% url 'blog:article_detail' pk=object.pk %}">Статья {{ object.title | capfirst }}</a></h4>
+        <div>дата публикации {{ object.created | date }} ,{{ object.created | time }}</div>
+        <div>
+            <a href="{% url 'feed:read_by' object.pk %}">
+                {% if request.user not in object.read_by.all %}
+                    Отметит статью как прочитанную
+                {% else %}
+                    Отметить статью как непрочитанную
+                {% endif %}
+            </a>
+        </div>
+    {% endfor %}</div>
+</body>
+</html>

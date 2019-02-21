@@ -5,14 +5,24 @@
     <title>Title</title>
 </head>
 <body>
+{% block menu %}
+    {% include 'blogapp/menu.html' %}
+{% endblock %}
 <div>
 {% for object in object_list %}
-    <div>{{ object.blog }} 1</div>
-    <div>{{ object.content }}2</div>
-{#    <div>{{ object.blog }}</div>#}
-    <div>{{ object.author }}3</div>
-    <div>Дата:{{ object.created | date }}  время: {{ object.created | time }}</div>
-    <div>{{ object.title }}5</div>
+    {% if request.user.username != object.user.username %}
+     <div>
+        <div> Блог {{ object.title | capfirst}} </div>
+
+        <a href="{% url 'feedapp:edit' pk=object.id %}">
+            {% if request.user in  object.subscribers.all %}
+                Отменить подписку
+            {% else %}
+                Подписаться
+
+                {% endif %}
+        {% endif %}</a>
+    </div>
 {% endfor %}</div>
 </body>
 </html>

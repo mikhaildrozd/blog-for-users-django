@@ -19,5 +19,7 @@ from django.conf.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blogapp.urls', namespace='blog'))
+    path('', include('blogapp.urls', namespace='blog')),
+    path('', include('feedapp.urls', namespace='feed')),
+
 ]

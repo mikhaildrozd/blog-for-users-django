@@ -5,14 +5,17 @@
     <title>Title</title>
 </head>
 <body>
+{% block menu %}
+    {% include 'blogapp/menu.html' %}
+{% endblock %}
+<div>
+    <h3><a href={% url 'blog:article_create'%}>Написать новую статью</a></h3>
+
+</div>
 <div>
 {% for object in object_list %}
-    <div>{{ object.blog }} 1</div>
-    <div>{{ object.content }}2</div>
-{#    <div>{{ object.blog }}</div>#}
-    <div>{{ object.author }}3</div>
-    <div>Дата:{{ object.created | date }}  время: {{ object.created | time }}</div>
-    <div>{{ object.title }}5</div>
+    <h4><a href="{% url 'blog:my_article' pk=object.pk %}">Статья {{ object.title | capfirst }}</a></h4>
+
 {% endfor %}</div>
 </body>
 </html>

@@ -6,13 +6,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class BlogListView(LoginRequiredMixin, ListView):
-    # просмотреть все блоги
     template_name = 'blogapp/bloglist.html'
     queryset = Blog.objects.order_by('user__username')
 
 
 class AuthorArticleList(LoginRequiredMixin, ListView):
-    # просмотреть свои статьи
     template_name = 'blogapp/articlelist.html'
 
     def get_queryset(self):
@@ -24,7 +22,14 @@ class ReadArticle(LoginRequiredMixin, DetailView):
     template_name = 'blogapp/read_article.html'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Article, pk=self.kwargs['pk'])
+        return get_object_or_404(Article, pk=self.kwargs['pk'], blog__in=self.request.user.subscriptions.all())
+
+
+class ReadMyArticle(LoginRequiredMixin, DetailView):
+    template_name = 'blogapp/read_article.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Article, pk=self.kwargs['pk'], author=self.request.user)
 
 
 class ArticleCreateView(CreateView):
@@ -36,22 +41,25 @@ class ArticleCreateView(CreateView):
         new_article = form.save(commit=False)
         new_article.blog = self.request.user.blog
         new_article.save()
-        return redirect(reverse_lazy('blog:blog_list'))
+        return redirect(reverse_lazy('blog:my_blog', args=[self.request.user.blog.pk]))
 
 
 class ArticleUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'blogapp/create_article.html'
     fields = ('title', 'content',)
-    success_url = reverse_lazy('blog:blog_list')
+
+    def get_success_url(self):
+        return reverse_lazy('blog:my_blog', args=[self.request.user.blog.pk])
 
     def get_object(self, queryset=None):
         return get_object_or_404(Article, pk=self.kwargs['pk'], author=self.request.user)
 
 
 class ArticleDeleteView(LoginRequiredMixin, DeleteView):
-    template_name = 'blogapp/delete.html'
     context_object_name = 'article'
-    success_url = reverse_lazy('blog:blog_list')
+
+    def get_success_url(self):
+        return reverse_lazy('blog:my_blog', args=[self.request.user.blog.pk])
 
     def get_object(self, queryset=None):
         return get_object_or_404(Article, pk=self.kwargs['pk'], author=self.request.user)

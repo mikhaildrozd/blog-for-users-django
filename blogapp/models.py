@@ -16,6 +16,7 @@ class Blog(models.Model):
     class Meta():
         pass
 
+
     def __str__(self):
         return self.title
 
@@ -34,8 +35,9 @@ class Article(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='posts', verbose_name='Блог', db_index=True)
     title = models.CharField(max_length=130, db_index=True, verbose_name='Название статьи')
     content = models.TextField(blank=True, verbose_name='Текст статьи', )
-    created = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
+    created = models.DateTimeField(auto_now=True, verbose_name='Создан')
     author = models.CharField(max_length=50, verbose_name='Автор блога')
+    read_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='read_articles', blank=True)
 
     class Meta():
         pass

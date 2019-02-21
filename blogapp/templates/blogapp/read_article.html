@@ -2,10 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{ article.blog }}</title>
 </head>
 <body>
-<div>
-{{ article.content }}</div>
+{% block menu %}
+    {% include 'blogapp/menu.html' %}
+{% endblock %}
+
+<div>{{ article.blog }}</div>
+<div>{{ article.title }}</div>
+<div>{{ article.content }}</div>
+
+{% if request.user.username == article.author %}
+    <div>
+        <form action="{% url 'blog:updates' object.pk %}">
+            {% csrf_token %}
+            <input type="submit" value="редактировать статью">
+        </form>
+
+    </div>
+
+    <div>
+        Уверены, что хотите удалить статью {{ object.title | upper }} ?
+        <form action="{% url 'blog:article_delete' object.pk %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="удалить статью">
+        </form>
+    </div>
+
+{% else %}
+    <div>
+        <a href="{% url 'feed:read_by' object.pk %}">
+            {% if request.user not in article.read_by.all %}
+                Отметит статью как прочитанную
+            {% else %}
+                Отметить статью как непрочитанную
+            {% endif %}
+        </a>
+    </div>
+{% endif %}
 </body>
 </html>
