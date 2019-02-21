@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block content %}
+    <div >
+        Уверены, что хотите удалить статью <strong>{{ object.name }}</strong>?
+{#        <form action="{% url 'admin:category_delete' object.pk %}" method="post">#}
+            {% csrf_token %}
+            <input  type="submit" value="удалить">
+{#        </form>#}
+        <button>
+            <a href=#>отмена</a>
+        </button>
+    </div>
+{% endblock %}
+</body>
+</html>

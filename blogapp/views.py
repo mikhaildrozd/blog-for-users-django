@@ -1,3 +1,57 @@
-from django.shortcuts import render
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from .models import Blog, Article
+from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-# Create your views here.
+
+class BlogListView(LoginRequiredMixin, ListView):
+    # просмотреть все блоги
+    template_name = 'blogapp/bloglist.html'
+    queryset = Blog.objects.order_by('user__username')
+
+
+class AuthorArticleList(LoginRequiredMixin, ListView):
+    # просмотреть свои статьи
+    template_name = 'blogapp/articlelist.html'
+
+    def get_queryset(self):
+        self.blog = get_object_or_404(Blog, pk=self.kwargs['pk'], user=self.request.user)
+        return self.blog.posts.order_by('-created')
+
+
+class ReadArticle(LoginRequiredMixin, DetailView):
+    template_name = 'blogapp/read_article.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Article, pk=self.kwargs['pk'])
+
+
+class ArticleCreateView(CreateView):
+    model = Article
+    template_name = 'blogapp/create_article.html'
+    fields = ('title', 'content',)
+
+    def form_valid(self, form):
+        new_article = form.save(commit=False)
+        new_article.blog = self.request.user.blog
+        new_article.save()
+        return redirect(reverse_lazy('blog:blog_list'))
+
+
+class ArticleUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'blogapp/create_article.html'
+    fields = ('title', 'content',)
+    success_url = reverse_lazy('blog:blog_list')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Article, pk=self.kwargs['pk'], author=self.request.user)
+
+
+class ArticleDeleteView(LoginRequiredMixin, DeleteView):
+    template_name = 'blogapp/delete.html'
+    context_object_name = 'article'
+    success_url = reverse_lazy('blog:blog_list')
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Article, pk=self.kwargs['pk'], author=self.request.user)
