@@ -34,7 +34,7 @@
     <div>
         <a href="{% url 'feed:read_by' object.pk %}">
             {% if request.user not in article.read_by.all %}
-                Отметит статью как прочитанную
+                Отметить статью как прочитанную
             {% else %}
                 Отметить статью как непрочитанную
             {% endif %}

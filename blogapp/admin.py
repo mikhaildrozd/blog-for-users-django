@@ -24,7 +24,5 @@ class BlogAdmin(admin.ModelAdmin):
 @admin.register(Article)
 class BlogArticleAdmin(admin.ModelAdmin):
     exclude = ('author',)
-
     list_display = ('title', 'blog', 'author', 'created')
 
-  
